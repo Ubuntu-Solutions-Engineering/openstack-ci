@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-#
 # Copyright 2014 Canonical, Ltd.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -16,23 +14,37 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Title: Default installation of single installer
-Result: Should return 0 if successful and fail otherwise
+Title: Test upstream deb is copied to container properly
+Result: Should return 0 if found upstream deb and fail otherwise
 """
 
 import sys
 sys.path.insert(0, '/usr/share/openstack')
+import pytest
 
+from subprocess import check_call
 from unittest.mock import MagicMock
 from cloudinstall.single_install import SingleInstall
 
 
-opts = MagicMock()
-opts.install_only = True
-
-if __name__ == '__main__':
+@pytest.fixture(scope="module")
+def container():
+    opts = MagicMock()
+    opts.upstream_deb = '../openstack_0.21-0ubuntu1_all.deb'
+    opts.install_only = True
     install = SingleInstall(opts, MagicMock())
     install.start_task = MagicMock()
     install.stop_current_task = MagicMock()
     install.register_tasks = MagicMock()
-    install.do_install()
+    try:
+        install.do_install()
+    except SystemExit:
+        pass
+
+    def fin():
+        # Cleanup after each test
+        try:
+            check_call(['single/cleanup.py'])
+        except Exception:
+            return False
+    return install

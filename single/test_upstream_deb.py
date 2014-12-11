@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-#
 # Copyright 2014 Canonical, Ltd.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -22,21 +20,28 @@ Result: Should return 0 if found upstream deb and fail otherwise
 
 import sys
 sys.path.insert(0, '/usr/share/openstack')
-
-from unittest.mock import MagicMock
-from cloudinstall.single_install import SingleInstall
+import pytest
+from fixture import container
 import cloudinstall.utils as utils
 
 
-opts = MagicMock()
-opts.upstream_deb = '../openstack_0.21-0ubuntu1_all.deb'
-opts.install_only = True
+def test_upstream_deb_exists(container):
+    """ Verify that the upstream local deb gets copied
+    into the container. Uses check_output to return an
+    empty byte string.
+    """
+    ret = utils.container_run(
+        'uoi-bootstrap',
+        'test -e openstack_0.21-0ubuntu1_all.deb')
+    assert ret == b''
 
-if __name__ == '__main__':
-    install = SingleInstall(opts, MagicMock())
-    install.start_task = MagicMock()
-    install.stop_current_task = MagicMock()
-    install.register_tasks = MagicMock()
-    install.do_install()
-    utils.container_run('uoi-bootstrap',
-                        'stat openstack_0.21-0ubuntu1_all.deb')
+
+def test_upstream_installed(container):
+    """ Test that the installed openstack version
+    is that of the upstream one
+    """
+    ret = utils.container_run(
+        'uoi-bootstrap',
+        'dpkg-query -W -f=\'${Version}\' openstack')
+    print(ret)
+    assert 0

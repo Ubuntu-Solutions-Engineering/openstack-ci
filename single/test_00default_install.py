@@ -15,12 +15,25 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-""" Clean up from integration testing. """
+"""
+Title: Default installation of single installer
+Result: Should return 0 if successful and fail otherwise
+"""
 
 import sys
 sys.path.insert(0, '/usr/share/openstack')
-from subprocess import call
-import shlex
 
-if __name__ == '__main__':
-    call(shlex.split('/usr/bin/openstack-install -k'))
+import pytest
+from unittest.mock import MagicMock
+from cloudinstall.single_install import SingleInstall
+
+
+def test_default_install():
+    opts = MagicMock()
+    opts.install_only = True
+    install = SingleInstall(opts, MagicMock())
+    install.start_task = MagicMock()
+    install.stop_current_task = MagicMock()
+    install.register_tasks = MagicMock()
+    with pytest.raises(SystemExit):
+        install.do_install()

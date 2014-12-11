@@ -36,10 +36,8 @@ def container():
     install.start_task = MagicMock()
     install.stop_current_task = MagicMock()
     install.register_tasks = MagicMock()
-    try:
+    with pytest.raises(SystemExit):
         install.do_install()
-    except SystemExit:
-        pass
 
     def fin():
         # Cleanup after each test

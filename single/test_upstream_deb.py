@@ -43,5 +43,4 @@ def test_upstream_installed(container):
     ret = utils.container_run(
         'uoi-bootstrap',
         'dpkg-query -W -f=\'${Version}\' openstack')
-    print(ret)
-    assert 0
+    assert ret == b'0.21-0ubuntu1'

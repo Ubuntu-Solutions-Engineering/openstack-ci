@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 #
 # Copyright 2014 Canonical, Ltd.
 #
@@ -14,7 +15,23 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
+import trace
 import sys
-sys.insert(0, '..')
+sys.path.insert(0, '/usr/share/openstack')
 
-from common.stub import single_stub
+from unittest.mock import MagicMock
+from cloudinstall.single_install import SingleInstall
+
+if __name__ == '__main__':
+    install = SingleInstall(MagicMock(), MagicMock())
+    install.start_task = MagicMock()
+    install.stop_current_task = MagicMock()
+    install.register_tasks = MagicMock()
+    tracer = trace.Trace(ignoredirs=[sys.prefix, sys.exec_prefix],
+                         trace=0,
+                         count=1)
+    tracer.run('install.do_install()')
+    r = tracer.results()
+    r.write_results(show_missing=True, coverdir=".")
+    #os.execl('/usr/share/openstack/bin/openstack-install -k', '')

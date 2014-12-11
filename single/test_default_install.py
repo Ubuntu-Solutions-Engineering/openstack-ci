@@ -15,23 +15,26 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
-import trace
 import sys
 sys.path.insert(0, '/usr/share/openstack')
 
+import argparse
 from unittest.mock import MagicMock
 from cloudinstall.single_install import SingleInstall
 
+
+class TestOpts:
+    extra_ppa = None
+    install_only = True
+    upstream_deb = None
+
+opts = TestOpts()
+parser = argparse.ArgumentParser()
+parser.parse_args(namespace=opts)
+
 if __name__ == '__main__':
-    install = SingleInstall(MagicMock(), MagicMock())
+    install = SingleInstall(opts, MagicMock())
     install.start_task = MagicMock()
     install.stop_current_task = MagicMock()
     install.register_tasks = MagicMock()
-    tracer = trace.Trace(ignoredirs=[sys.prefix, sys.exec_prefix],
-                         trace=0,
-                         count=1)
-    tracer.run('install.do_install()')
-    r = tracer.results()
-    r.write_results(show_missing=True, coverdir=".")
-    #os.execl('/usr/share/openstack/bin/openstack-install -k', '')
+    install.do_install()

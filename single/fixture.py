@@ -21,8 +21,8 @@ Result: Should return 0 if found upstream deb and fail otherwise
 import sys
 sys.path.insert(0, '/usr/share/openstack')
 import pytest
-
-from subprocess import check_call
+import shlex
+from subprocess import call
 from unittest.mock import MagicMock
 from cloudinstall.single_install import SingleInstall
 
@@ -41,8 +41,5 @@ def container():
 
     def fin():
         # Cleanup after each test
-        try:
-            check_call(['single/cleanup.py'])
-        except Exception:
-            return False
+        call(shlex.split('sudo openstack-install -k'))
     return install

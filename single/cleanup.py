@@ -23,4 +23,4 @@ from subprocess import call
 import shlex
 
 if __name__ == '__main__':
-    call(shlex.split('/usr/bin/openstack-install -k'))
+    call(shlex.split('sudo /usr/bin/openstack-install -k'))

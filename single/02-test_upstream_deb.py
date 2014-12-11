@@ -15,22 +15,22 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+"""
+Title: Test upstream deb is copied to container properly
+Result: Should return 0 if found upstream deb and fail otherwise
+"""
+
 import sys
 sys.path.insert(0, '/usr/share/openstack')
 
-import argparse
 from unittest.mock import MagicMock
 from cloudinstall.single_install import SingleInstall
+import cloudinstall.utils as utils
 
 
-class TestOpts:
-    extra_ppa = None
-    install_only = True
-    upstream_deb = None
-
-opts = TestOpts()
-parser = argparse.ArgumentParser()
-parser.parse_args(namespace=opts)
+opts = MagicMock()
+opts.upstream_deb = '../openstack_0.21-0ubuntu1_all.deb'
+opts.install_only = True
 
 if __name__ == '__main__':
     install = SingleInstall(opts, MagicMock())
@@ -38,3 +38,5 @@ if __name__ == '__main__':
     install.stop_current_task = MagicMock()
     install.register_tasks = MagicMock()
     install.do_install()
+    utils.container_run('uoi-bootstrap',
+                        'stat openstack_0.21-0ubuntu1_all.deb')

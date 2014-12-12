@@ -28,7 +28,7 @@ from cloudinstall.single_install import SingleInstall
 
 
 @pytest.fixture(scope="module")
-def container():
+def container(request):
     opts = MagicMock()
     opts.upstream_deb = '../openstack_0.21-0ubuntu1_all.deb'
     opts.install_only = True
@@ -41,5 +41,8 @@ def container():
 
     def fin():
         # Cleanup after each test
-        call(shlex.split('sudo openstack-install -k'))
+        print("Teardown lxc container")
+        call(shlex.split('sudo lxc-stop -n uoi-bootstrap'))
+        call(shlex.split('sudo lxc-destroy -n uoi-bootstrap'))
+    request.addfinalizer(fin)
     return install

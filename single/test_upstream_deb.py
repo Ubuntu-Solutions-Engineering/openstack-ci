@@ -21,8 +21,8 @@ Result: Should return 0 if found upstream deb and fail otherwise
 import sys
 sys.path.insert(0, '/usr/share/openstack')
 import pytest
-from fixture import container
 import cloudinstall.utils as utils
+from fixture import container
 
 
 def test_upstream_deb_exists(container):

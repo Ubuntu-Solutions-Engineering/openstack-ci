@@ -22,13 +22,23 @@ import sys
 sys.path.insert(0, '/usr/share/openstack')
 import pytest
 import shlex
+from os import makedirs as mkdir
+from os import removedirs as rmdir
+import os.path as path
 from subprocess import call
 from unittest.mock import MagicMock
 from cloudinstall.single_install import SingleInstall
+from cloudinstall.config import Config
 
 
 @pytest.fixture(scope="module")
 def container(request):
+    cfg = Config()
+
+    if not path.exists(cfg.cfg_path):
+        mkdir(cfg.cfg_path)
+    cfg.save_password('pass')
+    cfg.set_install_type('single')
     opts = MagicMock()
     opts.upstream_deb = '../openstack_0.21-0ubuntu1_all.deb'
     opts.install_only = True
@@ -39,10 +49,15 @@ def container(request):
     with pytest.raises(SystemExit):
         install.do_install()
 
+    while not path.exists(path.join(cfg.cfg_path, 'finished.json')):
+        print("Waiting on installation to finish.")
+
     def fin():
         # Cleanup after each test
         print("Teardown lxc container")
         call(shlex.split('sudo lxc-stop -n uoi-bootstrap'))
         call(shlex.split('sudo lxc-destroy -n uoi-bootstrap'))
+        if path.exists(cfg.cfg_path):
+            rmdir(cfg.cfg_path)
     request.addfinalizer(fin)
     return install

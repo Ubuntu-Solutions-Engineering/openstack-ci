@@ -46,3 +46,23 @@ def test_juju_home_set(container):
     ret = utils.container_run(
         'uoi-bootstrap', 'test -e .cloud-install/environments.yaml && echo 0')
     assert ret == 0
+
+def test_upstream_deb_exists(container):
+    """ Verify that the upstream local deb gets copied
+    into the container. Uses check_output to return an
+    empty byte string.
+    """
+    ret = utils.container_run(
+        'uoi-bootstrap',
+        'test -e openstack_0.21-0ubuntu1_all.deb')
+    assert ret == ''
+
+
+def test_upstream_installed(container):
+    """ Test that the installed openstack version
+    is that of the upstream one
+    """
+    ret = utils.container_run(
+        'uoi-bootstrap',
+        'dpkg-query -W -f=\'${Version}\' openstack')
+    assert ret == '0.21-0ubuntu1'

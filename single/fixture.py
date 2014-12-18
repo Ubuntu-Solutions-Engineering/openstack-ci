@@ -22,17 +22,31 @@ import sys
 sys.path.insert(0, '/usr/share/openstack')
 import pytest
 import shlex
+import logging
 from os import makedirs as mkdir
-from os import removedirs as rmdir
+from shutil import rmtree as rmdir
 import os.path as path
 from subprocess import call
 from unittest.mock import MagicMock
 from cloudinstall.single_install import SingleInstall
 from cloudinstall.config import Config
+from cloudinstall.log import setup_logger
 
 
 @pytest.fixture(scope="module")
 def container(request):
+    try:
+        setup_logger()
+    except PermissionError:
+        print("Permission error accessing log file.\n"
+              "This probably indicates a broken partial install.\n"
+              "Please use 'openstack-install -u' to uninstall, "
+              "and try again.\n"
+              "(You may want to save a copy of ~/.cloud-install/commands.log"
+              " for reporting a bug.)")
+        sys.exit()
+    log = logging.getLogger('cloudinstall.tester')
+    log.info("Starting auto-tests.")
     cfg = Config()
 
     if not path.exists(cfg.cfg_path):
@@ -48,9 +62,6 @@ def container(request):
     install.register_tasks = MagicMock()
     with pytest.raises(SystemExit):
         install.do_install()
-
-    while not path.exists(path.join(cfg.cfg_path, 'finished.json')):
-        print("Waiting on installation to finish.")
 
     def fin():
         # Cleanup after each test

@@ -20,13 +20,28 @@ Result: Should return 0 if all services deployed, 1 otherwise.
 
 import sys
 sys.path.insert(0, '/usr/share/openstack')
+import os.path as path
 import pytest
 import cloudinstall.utils as utils
 from fixture import container
+import json
 from cloudinstall.core import Controller
+from unittest.mock import MagicMock
+from cloudinstall.config import Config
+
+cfg = Config()
+
+@pytest.fixture()
+def status_start():
+    with pytest.raises(SystemExit):
+        utils.container_run_status('uoi-bootstrap', 'openstack-status --headless')
+    while not path.exists(path.join(cfg.cfg_path, 'finished.json')):
+        continue
 
 
+@pytest.mark.usefixtures('status_start')
 def test_status_finish(container):
     """ Verify OpenStack cloud is deployed
     """
-    pass
+    ret = json.loads(utils.slurp(path.join(cfg.cfg_path, 'finished.json')))
+    assert ret['status'] == 'success'

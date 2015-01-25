@@ -1,0 +1,76 @@
+#!/usr/bin/env python3
+# -*- mode: python; -*-
+#
+# Copyright 2015 Canonical, Ltd.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import argparse
+import logging
+import sys
+import yaml
+import os
+import glob
+import partial
+from openstackci.log import setup_logger
+from openstackci.tester import Tester
+from cloudinstall.config import Config
+import cloudinstall.utils as utils
+
+
+def parse_options(argv):
+    parser = argparse.ArgumentParser(
+        description='Ubuntu OpenStack Installer CI',
+        prog='openstack-ci')
+    parser.add_argument('-c', '--config', type=str, dest='config_file',
+                        help="Profile to apply during CI.")
+    parser.add_argument('-t', '--test', type=str, dest='test_name',
+                        help="Test to run.")
+    parser.add_argument('-a', '--all', default=False, dest='all_test',
+                        help="Run all quality/regression tests.")
+    return parser.parse_args(argv)
+
+
+def populate_config(opts):
+    # Always override presaved config if defined in cli switch
+    if opts.config_file and os.path.exists(opts.config_file):
+        _cfg = yaml.load(utils.slurp(opts.config_file))
+    else:
+        _cfg = {}
+
+    # Update cfg dict with command line opts
+    _cfg.update(vars(opts))
+    return Config(cfg_obj=_cfg, cfg_file=os.path.basename(opts.config_file))
+
+if __name__ == "__main__":
+    opts = parse_options(sys.argv[1:])
+    cfg = populate_config(opts)
+    setup_logger()
+
+    log = logging.getLogger('openstackci')
+
+    tester = Tester()
+
+    cmd = "sudo -E openstack-install -c {}".format(
+        cfg.getopt('config_file'))
+
+    # Run install
+    tester.run_install(partial(utils.get_command_output, cmd, timeout=600))
+
+    # Installation finished, perform tests.
+    if cfg.getopt('test_name'):
+        tester.run_test(cfg.getopt('test_name'))
+
+    if cfg.getopt('all_test'):
+        tester.run_all_tests()

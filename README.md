@@ -1,28 +1,29 @@
-openstack-installer-ci
-======================
+openstack-ci
+============
 
 Automated testing
 
 
 ## Setup
 
-Clone this repository and run the following within that directory.
-
+Install `openstack` and `openstack-ci`.
 
 ```
 $ sudo apt-add-repository ppa:cloud-installer/experimental
-$ git clone https://github.com/Ubuntu-Solutions-Engineering/openstack-installer.git ~/openstack-installer
-$ cd ~/openstack-installer
-$ make install-dependencies
-$ make deb
-$ sudo dpkg -i ../openstack_*.deb
-$ pip install pytest
-$ git clone https://github.com/Ubuntu-Solutions-Engineering/openstack-installer-ci.git
-$ cd openstack-installer-ci
-$ ./runtests.sh
+$ sudo apt-get update
+$ sudo apt-get install openstack openstack-ci
 ```
 
-## TODO
+Git clone the tests repository:
 
-* Add multi tests
-* Add landscape deploy tests
+```
+$ git clone https://github.com/Ubuntu-Solutions-Engineering/openstack-tests.git
+```
+
+## Running
+
+```
+$ cd openstack-tests
+$ sudo openstack-ci -c /etc/openstack-ci/profiles/landscape.yaml \
+    -t regressions/00_test_service_deploy
+```

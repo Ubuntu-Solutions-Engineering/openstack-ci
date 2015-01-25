@@ -47,16 +47,17 @@ class TestUnit:
 
 class Tester:
 
-    def __init__(self):
-        self.test_units = []
-
-    def add_unit(self, test_unit):
-        self.test_units.append(test_unit)
-
     def run_install(self, install_cmd):
         ret = install_cmd()
         if ret['status'] != 0:
             sys.exit(ret['status'])
+
+    def run_all_tests(self):
+        if not os.path.exists('quality') and not os.path.exists('regressions'):
+            raise SystemExit('Unable to find qualit and regressions '
+                             'directories, make sure you are running this '
+                             'from the toplevel openstack-tests directory.')
+        sys.path.insert(0, '.')
 
     def run_test(self, test_name):
         """ Runs a single test """

@@ -34,19 +34,12 @@ import sys
 
 import openstackci
 
-REQUIREMENTS = [
-    "PyYAML",
-]
-
-TEST_REQUIREMENTS = list(REQUIREMENTS)
-TEST_REQUIREMENTS.extend(["mock", "nose"])
-
 if sys.argv[-1] == 'clean':
     print("Cleaning up ...")
-    os.system('rm -rf cloud_installer.egg-info build dist')
+    os.system('rm -rf openstackci.egg-info build dist')
     sys.exit()
 
-setup(name='openstack',
+setup(name='openstackci',
       version=openstackci.__version__,
       description="Ubuntu OpenStack Installer CI",
       long_description=__doc__,

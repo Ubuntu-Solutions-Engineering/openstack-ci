@@ -16,6 +16,7 @@
 
 import sys
 import os
+import pkgutil
 from importlib import import_module
 from openstackci.report import Reporter
 
@@ -24,6 +25,9 @@ class TestUnit:
 
     name = None
     description = None
+    # ID of test i.e. agents_started.py is just 'agents_started'
+    # for the identifier
+    identifier = None
 
     def __init__(self):
         self.report = Reporter()
@@ -47,23 +51,48 @@ class TestUnit:
 
 class Tester:
 
+    def _load_test_modules(self, module_dir=None):
+        """ loads tests from directories """
+        if module_dir is None:
+            module_dir = os.path.abspath('.')
+        if module_dir not in sys.path:
+            sys.path.insert(0, module_dir)
+        import quality
+        import regressions
+        quality_tests = [import_module('quality.' + tname)
+                         for (_, tname, _) in
+                         pkgutil.iter_modules(quality.__path__)]
+        regression_tests = [import_module('regressions.' + tname)
+                            for (_, tname, _) in
+                            pkgutil.iter_modules(regressions.__path__)]
+        return quality_tests + regression_tests
+
+    def get_test(self, test_name):
+        for test in self._load_test_modules():
+            t = test.__test_class__()
+            if test_name == t.name():
+                return t
+
     def run_install(self, install_cmd):
         ret = install_cmd()
         if ret['status'] != 0:
             sys.exit(ret['status'])
 
-    def run_all_tests(self):
+    def run_all_tests(self, test_dir=None):
         if not os.path.exists('quality') and not os.path.exists('regressions'):
             raise SystemExit('Unable to find qualit and regressions '
                              'directories, make sure you are running this '
                              'from the toplevel openstack-tests directory.')
-        sys.path.insert(0, '.')
+        for test in self._load_test_modules(test_dir):
+            t = test.__test_class__()
+            t.run()
 
     def run_test(self, test_name):
         """ Runs a single test """
         # add search path in toplevel tests directory that contains
         # both quality/ and regressions/ directories.
         # i.e ~/openstack-tests
-        sys.path.insert(0, os.path.dirname(test_name))
-        t = import_module(test_name)()
-        t.run()
+        for test in self._load_test_modules(os.path.dirname(test_name)):
+            t = test.__test_class__()
+            if test_name == t.identifier:
+                t.run()

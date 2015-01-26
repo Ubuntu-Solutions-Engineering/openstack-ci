@@ -23,8 +23,8 @@ class Reporter:
 
     def fail(self, msg):
         """ Returns a failed message """
-        log.error("[FAIL] {}".format(msg))
+        log.error("Result: [FAIL] {}".format(msg))
 
     def success(self, msg):
         """ Return success message """
-        log.info("[PASS] {}".format(msg))
+        log.info("Result: [PASS] {}".format(msg))

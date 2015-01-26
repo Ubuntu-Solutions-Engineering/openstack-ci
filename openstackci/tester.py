@@ -88,6 +88,7 @@ class Tester:
                              'from the toplevel openstack-tests directory.')
         for test in self._load_test_modules(test_dir):
             t = test.__test_class__()
+            log.info("Test: {}".format(t.description))
             result = t.run()
             if result != 0:
                 sys.exit(result)
@@ -98,7 +99,7 @@ class Tester:
         # both quality/ and regressions/ directories.
         # i.e ~/openstack-tests
         t = self.get_test(test_name)
-        log.info("Running test: {}".format(t.description))
+        log.info("Test: {}".format(t.description))
         result = t.run()
         if result != 0:
             sys.exit(result)

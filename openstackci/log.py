@@ -41,7 +41,7 @@ def setup_logger(name=__name__):
     consolelog = logging.StreamHandler()
     consolelog.setLevel(logging.INFO)
     consolelog.setFormatter(logging.Formatter(
-        '[%(levelname)-5s \N{BULLET} %(asctime)s \N{BULLET} %(name)-16s] '
+        '[%(levelname)-5s \N{BULLET} %(asctime)s \N{BULLET} %(name)-10s] '
         '%(message)s',
         datefmt='%H:%M:%S'))
 

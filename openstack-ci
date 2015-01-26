@@ -19,9 +19,8 @@
 import argparse
 import logging
 import sys
-import shlex
 from os import getenv
-from subprocess import check_output
+from subprocess import check_call
 from functools import partial
 from openstackci.log import setup_logger
 from openstackci.tester import Tester
@@ -67,7 +66,7 @@ if __name__ == "__main__":
     if opts.with_install:
         cmd = ("{} sudo -E openstack-install -c {} --headless".format(
             cmd, opts.config_file))
-        tester.run_install(partial(check_output,
+        tester.run_install(partial(check_call,
                                    cmd,
                                    shell=True))
 

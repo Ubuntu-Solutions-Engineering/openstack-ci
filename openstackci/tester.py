@@ -19,6 +19,7 @@ import os
 import pkgutil
 import logging
 from importlib import import_module
+from subprocess import CalledProcessError
 from openstackci.report import Reporter
 
 log = logging.getLogger('openstackci')
@@ -77,9 +78,11 @@ class Tester:
                 return t
 
     def run_install(self, install_cmd):
-        ret = install_cmd()
-        if ret['status'] != 0:
-            sys.exit(ret['status'])
+        log.info("Deploying environment.")
+        try:
+            install_cmd()
+        except CalledProcessError as e:
+            sys.exit(e.returncode)
 
     def run_all_tests(self, test_dir=None):
         if not os.path.exists('quality') and not os.path.exists('regressions'):

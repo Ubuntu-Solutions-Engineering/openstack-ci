@@ -16,4 +16,4 @@
 
 """ Ubuntu OpenStack Installer CI """
 
-__version__ = '0.1'
+__version__ = "0.1"

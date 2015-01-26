@@ -52,3 +52,10 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# debian
+debian/files
+debian/openstack-ci/
+*.substvars
+*.debhelper
+*.pybuild

@@ -1,0 +1,34 @@
+Source: openstack-ci
+Section: admin
+Priority: extra
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Build-Depends: debhelper (>= 9),
+               dh-python,
+               pep8,
+               pyflakes,
+               python3-all,
+               python3-coverage,
+               python3-mock,
+               python3-nose,
+               python3-setuptools,
+               python3-yaml
+Standards-Version: 3.9.5
+Homepage: https://github.com/Ubuntu-Solutions-Engineering/openstack-ci
+X-Python3-Version: >= 3.4
+Vcs-Browser: https://github.com/Ubuntu-Solutions-Engineering/openstack-ci
+Vcs-Git: https://github.com/Ubuntu-Solutions-Engineering/openstack-ci.git
+
+Package: openstack-ci
+Architecture: all
+Depends: python3-all,
+         python3-mock,
+         python3-nose,
+         python3-requests,
+         python3-requests-oauthlib,
+         python3-setuptools,
+         python3-yaml,
+         ${misc:Depends},
+         ${python3:Depends}
+Description: Ubuntu Openstack Installer CI
+ Continuous integration tools for Ubuntu OpenStack
+ Installer.

@@ -1,0 +1,21 @@
+#!/usr/bin/make -f
+
+export PYBUILD_NAME=openstackci
+export PYBUILD_DISABLE_python2=1
+export PYBUILD_INSTALL_DIR=usr/share/openstack-ci/
+export PYBUILD_INSTALL_ARGS_python3=--install-lib=usr/share/openstack-ci/ \
+	--install-data=usr/ \
+	--install-scripts=usr/share/openstack-ci/bin/ \
+	--root=$(CURDIR)/debian/openstack-ci/ \
+	--no-compile -O0
+
+%:
+	dh $@ --with python3 --buildsystem=pybuild
+
+override_dh_python3:
+	dh_python3 --ignore-shebangs
+override_dh_installinit:
+	dh_installinit --no-start
+
+override_dh_auto_test:
+	@echo "No tests."

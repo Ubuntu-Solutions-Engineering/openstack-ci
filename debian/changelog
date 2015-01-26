@@ -1,0 +1,5 @@
+openstack-ci (0.1-0ubuntu1) utopic; urgency=medium
+
+  * Initial Packaging
+
+ -- Adam Stokes <adam.stokes@ubuntu.com>  Sun, 25 Jan 2015 18:52:29 -0500

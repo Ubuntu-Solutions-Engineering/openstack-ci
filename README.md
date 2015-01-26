@@ -22,8 +22,9 @@ $ git clone https://github.com/Ubuntu-Solutions-Engineering/openstack-tests.git
 
 ## Running
 
+A single test, with a test sitting in `quality/00_agents_started.py`
+
 ```
 $ cd openstack-tests
-$ sudo openstack-ci -c /etc/openstack-ci/profiles/landscape.yaml \
-    -t regressions/00_test_service_deploy
+$ sudo openstack-ci -t 00_agents_started
 ```

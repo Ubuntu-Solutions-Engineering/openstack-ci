@@ -16,7 +16,7 @@
 
 import logging
 
-log = logging.getLogger('openstackci.report')
+log = logging.getLogger('openstackci')
 
 
 class Reporter:

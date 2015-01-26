@@ -1,1 +1,1 @@
-/usr/share/openstack-ci/bin/openstack-ci		/usr/bin/openstack-ci
+/usr/share/openstack-ci/openstack-ci		/usr/bin/openstack-ci

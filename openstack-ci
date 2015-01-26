@@ -52,7 +52,7 @@ if __name__ == "__main__":
 
     log = logging.getLogger('openstackci')
 
-    if not opts.config_file:
+    if not opts.config_file and opts.with_install:
         log.error("A configuration file is required to perform tests.")
 
     log.info("Initializing tests.")

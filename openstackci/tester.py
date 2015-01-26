@@ -17,8 +17,11 @@
 import sys
 import os
 import pkgutil
+import logging
 from importlib import import_module
 from openstackci.report import Reporter
+
+log = logging.getLogger('openstackci')
 
 
 class TestUnit:
@@ -70,7 +73,7 @@ class Tester:
     def get_test(self, test_name):
         for test in self._load_test_modules():
             t = test.__test_class__()
-            if test_name == t.name():
+            if test_name == t.identifier:
                 return t
 
     def run_install(self, install_cmd):
@@ -85,14 +88,17 @@ class Tester:
                              'from the toplevel openstack-tests directory.')
         for test in self._load_test_modules(test_dir):
             t = test.__test_class__()
-            t.run()
+            result = t.run()
+            if result != 0:
+                sys.exit(result)
 
     def run_test(self, test_name):
         """ Runs a single test """
         # add search path in toplevel tests directory that contains
         # both quality/ and regressions/ directories.
         # i.e ~/openstack-tests
-        for test in self._load_test_modules(os.path.dirname(test_name)):
-            t = test.__test_class__()
-            if test_name == t.identifier:
-                t.run()
+        t = self.get_test(test_name)
+        log.info("Running test: {}".format(t.description))
+        result = t.run()
+        if result != 0:
+            sys.exit(result)

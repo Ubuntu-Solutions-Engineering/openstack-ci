@@ -43,13 +43,14 @@ def setup_logger(name=__name__):
     consolelog.setFormatter(logging.Formatter(
         '[%(levelname)-5s \N{BULLET} %(asctime)s \N{BULLET} %(name)-16s] '
         '%(message)s',
-        datefmt='%m-%d %H:%M:%S'))
+        datefmt='%H:%M:%S'))
 
-    f = logging.Filter(name='cloudinstall')
-    consolelog.addFilter(f)
+    # f = logging.Filter(name='cloudinstall')
+    # consolelog.addFilter(f)
     f = logging.Filter(name='openstackci')
     consolelog.addFilter(f)
     logger = logging.getLogger('')
+    logger.setLevel(logging.DEBUG)
     logger.addHandler(consolelog)
 
     return logger

@@ -27,6 +27,7 @@ Depends: python3-all,
          python3-requests-oauthlib,
          python3-setuptools,
          python3-yaml,
+         openstack,
          ${misc:Depends},
          ${python3:Depends}
 Description: Ubuntu Openstack Installer CI

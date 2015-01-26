@@ -20,7 +20,8 @@ import argparse
 import logging
 import sys
 import shlex
-from subprocess import check_output, DEVNULL
+from os import getenv
+from subprocess import check_output
 from functools import partial
 from openstackci.log import setup_logger
 from openstackci.tester import Tester
@@ -58,13 +59,17 @@ if __name__ == "__main__":
     log.info("Initializing tests.")
     tester = Tester()
 
+    bstarget = getenv('JUJU_BOOTSTRAP_TO')
+    if bstarget:
+        cmd = "JUJU_BOOSTRAP_TO={}".format(bstarget)
+    else:
+        cmd = ""
     if opts.with_install:
-        cmd = ("sudo -E openstack-install -c {}".format(
-            opts.config_file))
+        cmd = ("{} sudo -E openstack-install -c {} --headless".format(
+            cmd, opts.config_file))
         tester.run_install(partial(check_output,
-                                   shlex.split(cmd),
-                                   stdout=DEVNULL,
-                                   stderr=DEVNULL))
+                                   cmd,
+                                   shell=True))
 
     # Perform tests.
     if opts.test_name:

@@ -20,14 +20,14 @@ Vcs-Git: https://github.com/Ubuntu-Solutions-Engineering/openstack-ci.git
 
 Package: openstack-ci
 Architecture: all
-Depends: python3-all,
+Depends: openstack,
+         python3-all,
          python3-mock,
          python3-nose,
          python3-requests,
          python3-requests-oauthlib,
          python3-setuptools,
          python3-yaml,
-         openstack,
          ${misc:Depends},
          ${python3:Depends}
 Description: Ubuntu Openstack Installer CI

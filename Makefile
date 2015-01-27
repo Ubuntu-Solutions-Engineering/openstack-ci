@@ -27,11 +27,12 @@ clean:
 	@rm -rf ../openstack-ci_*.deb ../openstack-ci_*.tar.gz ../openstack-ci_*.dsc ../openstack-ci_*.changes \
 		../openstack-ci_*.build
 
+DPKGBUILDARGS = -us -uc -i'.git.*|.tox|.bzr.*|.editorconfig|.travis-yaml'
 deb-src: clean update_version tarball
-	@debuild -S -us -uc
+	@dpkg-buildpackage -S $(DPKGBUILDARGS)
 
 deb: clean update_version tarball
-	@debuild -us -uc -i
+	@dpkg-buildpackage -b $(DPKGBUILDARGS)
 
 current_version:
 	@echo $(VERSION)

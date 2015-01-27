@@ -102,7 +102,7 @@ class Tester:
         # both quality/ and regressions/ directories.
         # i.e ~/openstack-tests
         t = self.get_test(test_name)
-        log.info("Test: {}".format(t.description))
+        log.info("Loading test {}/{}".format(t.name, t.description))
         result = t.run()
         if result != 0:
             sys.exit(result)

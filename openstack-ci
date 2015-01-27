@@ -25,6 +25,9 @@ from functools import partial
 from openstackci.log import setup_logger
 from openstackci.tester import Tester
 
+# add cloudinstall module path
+sys.path.insert(0, '/usr/share/openstack')
+
 
 def parse_options(argv):
     parser = argparse.ArgumentParser(

@@ -19,18 +19,17 @@
 import argparse
 import logging
 import sys
+sys.path.insert(0, '/usr/share/openstack')
+
 from os import getenv
 from subprocess import check_call
 from functools import partial
 from openstackci.log import setup_logger
 from openstackci.tester import Tester
 
-# add cloudinstall module path
-sys.path.insert(0, '/usr/share/openstack')
-
 # load modules from cloudinstall
 import cloudinstall.utils as utils
-import cloudinstall.config as Config
+from cloudinstall.config import Config
 
 
 def parse_options(argv):

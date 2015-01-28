@@ -18,7 +18,7 @@ import logging
 import yaml
 import os
 from datetime import datetime
-import cloudinstall.utils as utils
+from cloudinstall import utils
 
 
 log = logging.getLogger('openstackci')
@@ -26,7 +26,8 @@ log = logging.getLogger('openstackci')
 
 class Reporter:
 
-    def __init__(self, name, description):
+    def __init__(self, name, description, config):
+        self.config = config
         self.failed_tests = []
         self.success_tests = []
         self.name = name
@@ -48,25 +49,27 @@ class Reporter:
         data = {'timestamp': self.now.isoformat(),
                 'name': self.name,
                 'description': self.description,
-                'num_success': len(self.success_tests),
-                'num_failed': len(self.failed_tests)}
+                'success': {'total': len(self.success_tests),
+                            'tests_ran': self.success_tests},
+                'failed': {'total': len(self.failed_tests),
+                           'tests_ran': self.failed_tests}}
         if len(self.failed_tests) > 0:
             self.final_exit_code = 1
             data['status'] = {'text': 'Failed.', 'code': self.final_exit_code}
-        elif len(self.success) <= 0:
+        elif len(self.success_tests) <= 0:
             self.final_exit_code = 2
             data['status'] = {'text': 'Unknown', 'code': self.final_exit_code}
         else:
             data['status'] = {'text': 'Passed', 'code': self.final_exit_code}
         return data
 
-    def save(self, test_name):
-        save_path = os.path.join(utils.install_user(),
-                                 '.cloud-install/reports')
-        save_file = os.path.join(save_path,
-                                 test_name,
-                                 '_',
-                                 self.now.isoformat())
+    def save(self):
+        save_path = os.path.join(self.config.cfg_path,
+                                 'reports')
+        save_file = os.path.join(
+            save_path,
+            '{}_{}.yaml'.format(self.name.replace(' ', '_').lower(),
+                                self.now.isoformat()))
         if not os.path.exists(save_path):
             os.makedirs(save_path)
         utils.spew(save_file,

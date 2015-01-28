@@ -36,8 +36,8 @@ class TestUnit:
     identifier = None
 
     def __init__(self, config):
-        self.report = Reporter(self.name, self.description)
         self.config = config
+        self.report = Reporter(self.name, self.description, self.config)
         self.authenticate_juju()
 
     def authenticate_juju(self):

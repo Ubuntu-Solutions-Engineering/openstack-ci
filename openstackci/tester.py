@@ -34,6 +34,7 @@ class TestUnit:
     # ID of test i.e. agents_started.py is just 'agents_started'
     # for the identifier
     identifier = None
+    install_type = None
 
     def __init__(self, config):
         self.config = config
@@ -41,6 +42,11 @@ class TestUnit:
                                self.description,
                                self.identifier,
                                self.config)
+
+    def can_run(self):
+        if self.config.getopt('install_type') == self.install_type:
+            return True
+        return False
 
     def authenticate_juju(self):
         if not len(self.config.juju_env['state-servers']) > 0:
@@ -113,12 +119,13 @@ class Tester:
                              'from the toplevel openstack-tests directory.')
         for test in self._load_test_modules(test_dir):
             t = test.__test_class__(self.config)
-            t.authenticate_juju()
-            log.info("Test: {}".format(t.description))
-            t.run()
-            t.report.save()
-            if t.report.final_exit_code != 0:
-                sys.exit(t.report.final_exit_code)
+            if t.can_run():
+                t.authenticate_juju()
+                log.info("Test: {}".format(t.description))
+                t.run()
+                t.report.save()
+                if t.report.final_exit_code != 0:
+                    sys.exit(t.report.final_exit_code)
 
     def run_test(self, test_name):
         """ Runs a single test """

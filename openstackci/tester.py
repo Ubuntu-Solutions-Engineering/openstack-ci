@@ -21,6 +21,8 @@ import logging
 from importlib import import_module
 from subprocess import CalledProcessError
 from openstackci.report import Reporter
+from cloudinstall.juju import JujuState
+from macumba import JujuClient
 
 log = logging.getLogger('openstackci')
 
@@ -33,8 +35,22 @@ class TestUnit:
     # for the identifier
     identifier = None
 
-    def __init__(self):
-        self.report = Reporter()
+    def __init__(self, config):
+        self.report = Reporter(self.name, self.description)
+        self.config = config
+        self.authenticate_juju()
+
+    def authenticate_juju(self):
+        if not len(self.config.juju_env['state-servers']) > 0:
+            state_server = 'localhost:17070'
+        else:
+            state_server = self.config.juju_env['state-servers'][0]
+        self.juju = JujuClient(
+            url=os.path.join('wss://', state_server),
+            password=self.config.juju_api_password)
+        self.juju.login()
+        self.juju_state = JujuState(self.juju)
+        log.info('Authenticated against juju')
 
     @classmethod
     def name(cls):
@@ -55,6 +71,9 @@ class TestUnit:
 
 class Tester:
 
+    def __init__(self, config):
+        self.config = config
+
     def _load_test_modules(self, module_dir=None):
         """ loads tests from directories """
         if module_dir is None:
@@ -73,7 +92,7 @@ class Tester:
 
     def get_test(self, test_name):
         for test in self._load_test_modules():
-            t = test.__test_class__()
+            t = test.__test_class__(self.config)
             if test_name == t.identifier:
                 return t
 
@@ -86,15 +105,16 @@ class Tester:
 
     def run_all_tests(self, test_dir=None):
         if not os.path.exists('quality') and not os.path.exists('regressions'):
-            raise SystemExit('Unable to find qualit and regressions '
+            raise SystemExit('Unable to find quality and regressions '
                              'directories, make sure you are running this '
                              'from the toplevel openstack-tests directory.')
         for test in self._load_test_modules(test_dir):
-            t = test.__test_class__()
+            t = test.__test_class__(self.config)
             log.info("Test: {}".format(t.description))
-            result = t.run()
-            if result != 0:
-                sys.exit(result)
+            t.run()
+            t.report.save()
+            if t.report.final_exit_code != 0:
+                sys.exit(t.report.final_exit_code)
 
     def run_test(self, test_name):
         """ Runs a single test """
@@ -103,6 +123,7 @@ class Tester:
         # i.e ~/openstack-tests
         t = self.get_test(test_name)
         log.info("Loading test {}/{}".format(t.name, t.description))
-        result = t.run()
-        if result != 0:
-            sys.exit(result)
+        t.run()
+        t.report.save()
+        if t.report.final_exit_code != 0:
+            sys.exit(t.report.final_exit_code)

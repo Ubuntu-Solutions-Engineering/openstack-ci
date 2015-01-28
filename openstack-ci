@@ -28,6 +28,10 @@ from openstackci.tester import Tester
 # add cloudinstall module path
 sys.path.insert(0, '/usr/share/openstack')
 
+# load modules from cloudinstall
+import cloudinstall.utils as utils
+import cloudinstall.config as Config
+
 
 def parse_options(argv):
     parser = argparse.ArgumentParser(
@@ -51,6 +55,7 @@ def parse_options(argv):
 
 if __name__ == "__main__":
     opts = parse_options(sys.argv[1:])
+    cfg = Config(utils.populate_config(opts))
     setup_logger()
 
     log = logging.getLogger('openstackci')
@@ -59,7 +64,7 @@ if __name__ == "__main__":
         log.error("A configuration file is required to perform tests.")
 
     log.info("Initializing tests.")
-    tester = Tester()
+    tester = Tester(cfg)
 
     bstarget = getenv('JUJU_BOOTSTRAP_TO')
     if bstarget:

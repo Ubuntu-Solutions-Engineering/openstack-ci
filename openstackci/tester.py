@@ -41,7 +41,6 @@ class TestUnit:
                                self.description,
                                self.identifier,
                                self.config)
-        self.authenticate_juju()
 
     def authenticate_juju(self):
         if not len(self.config.juju_env['state-servers']) > 0:
@@ -97,6 +96,7 @@ class Tester:
         for test in self._load_test_modules():
             t = test.__test_class__(self.config)
             if test_name == t.identifier:
+                t.authenticate_juju()
                 return t
 
     def run_install(self, install_cmd):
@@ -113,6 +113,7 @@ class Tester:
                              'from the toplevel openstack-tests directory.')
         for test in self._load_test_modules(test_dir):
             t = test.__test_class__(self.config)
+            t.authenticate_juju()
             log.info("Test: {}".format(t.description))
             t.run()
             t.report.save()

@@ -26,12 +26,13 @@ log = logging.getLogger('openstackci')
 
 class Reporter:
 
-    def __init__(self, name, description, config):
+    def __init__(self, name, description, identifier, config):
         self.config = config
         self.failed_tests = []
         self.success_tests = []
         self.name = name
         self.description = description
+        self.identifier = identifier
         self.now = datetime.now()
         self.final_exit_code = 0
 
@@ -68,7 +69,7 @@ class Reporter:
                                  'reports')
         save_file = os.path.join(
             save_path,
-            '{}_{}.yaml'.format(self.name.replace(' ', '_').lower(),
+            '{}_{}.yaml'.format(self.identifier,
                                 self.now.isoformat()))
         if not os.path.exists(save_path):
             os.makedirs(save_path)

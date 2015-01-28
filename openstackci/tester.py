@@ -37,7 +37,10 @@ class TestUnit:
 
     def __init__(self, config):
         self.config = config
-        self.report = Reporter(self.name, self.description, self.config)
+        self.report = Reporter(self.name,
+                               self.description,
+                               self.identifier,
+                               self.config)
         self.authenticate_juju()
 
     def authenticate_juju(self):

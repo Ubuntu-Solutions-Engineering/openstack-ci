@@ -27,7 +27,7 @@ def print_version():
 
     @return: 0 on success 1 on failure
     """
-    pattern = 'openstack-ci\s.(.*)-\dubuntu\d'
+    pattern = 'openstack-ci\s\((\d\.\d)\)'
     with open('debian/changelog', 'r') as f:
         match = re.match(pattern, f.read())
     if match:

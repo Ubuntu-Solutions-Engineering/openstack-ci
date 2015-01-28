@@ -34,6 +34,7 @@ class Validator:
         services = self.juju_state.services
         for svc in services:
             unit = svc.units[0]
+            log.info("Checking {}".format(unit.unit_name))
             if 'started' not in unit.agent_state:
                 failed_services.append(unit.unit_name)
             else:

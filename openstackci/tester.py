@@ -49,16 +49,20 @@ class TestUnit:
         return False
 
     def authenticate_juju(self):
-        if not len(self.config.juju_env['state-servers']) > 0:
-            state_server = 'localhost:17070'
-        else:
-            state_server = self.config.juju_env['state-servers'][0]
-        self.juju = JujuClient(
-            url=os.path.join('wss://', state_server),
-            password=self.config.juju_api_password)
-        self.juju.login()
-        self.juju_state = JujuState(self.juju)
-        log.info('Authenticated against juju')
+        try:
+            if not len(self.config.juju_env['state-servers']) > 0:
+                state_server = 'localhost:17070'
+            else:
+                state_server = self.config.juju_env['state-servers'][0]
+            self.juju = JujuClient(
+                url=os.path.join('wss://', state_server),
+                password=self.config.juju_api_password)
+            self.juju.login()
+            self.juju_state = JujuState(self.juju)
+            log.info('Authenticated against juju')
+        except ConnectionRefusedError as e:
+            log.error("Cannot connect to juju: {}".format(e.strerror))
+            sys.exit(e.errno)
 
     @classmethod
     def name(cls):

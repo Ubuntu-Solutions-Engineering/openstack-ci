@@ -27,11 +27,14 @@ clean:
 	@rm -rf ../openstack-ci_*.deb ../openstack-ci_*.tar.gz ../openstack-ci_*.dsc ../openstack-ci_*.changes \
 		../openstack-ci_*.build
 
+man-pages:
+	@pandoc -s docs/openstack-ci.rst -t man -o man/en/openstack-ci.1
+
 DPKGBUILDARGS = -us -uc -i'.git.*|.tox|.bzr.*|.editorconfig|.travis-yaml'
 deb-src: clean update_version tarball
 	@dpkg-buildpackage -S $(DPKGBUILDARGS)
 
-deb: clean update_version tarball
+deb: clean update_version man-pages tarball
 	@dpkg-buildpackage -b $(DPKGBUILDARGS)
 
 current_version:

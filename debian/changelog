@@ -1,7 +1,13 @@
+openstack-ci (0.3) UNRELEASED; urgency=medium
+
+  * Add web interface
+
+ -- Adam Stokes <adam.stokes@ubuntu.com>  Tue, 27 Jan 2015 16:10:24 -0500
+
 openstack-ci (0.2) UNRELEASED; urgency=medium
 
   * Include cloudinstall path
-	
+
  -- Adam Stokes <adam.stokes@ubuntu.com>  Tue, 27 Jan 2015 16:10:24 -0500
 
 openstack-ci (0.1) utopic; urgency=medium

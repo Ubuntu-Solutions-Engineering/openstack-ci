@@ -47,7 +47,7 @@ setup(name='openstackci',
       author_email='ubuntu-dev@lists.ubuntu.com',
       url='https://github.com/Ubuntu-Solutions-Engineering/openstack-ci',
       license="AGPLv3+",
-      scripts=['openstack-ci'],
+      scripts=['openstack-ci', 'openstack-ci-web'],
       packages=find_packages(exclude=["test"]),
       data_files=[
           ('share/man/man1', ['man/en/openstack-ci.1'])

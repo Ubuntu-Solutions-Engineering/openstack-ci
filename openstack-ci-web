@@ -1,0 +1,59 @@
+#!/usr/bin/env python3
+# -*- mode: python; -*-
+#
+# Copyright 2015 Canonical, Ltd.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import argparse
+import logging
+import sys
+sys.path.insert(0, '/usr/share/openstack')
+
+from openstackci.web import App
+from openstackci.log import setup_logger
+
+# load modules from cloudinstall
+import cloudinstall.utils as utils
+from cloudinstall.config import Config
+
+
+def parse_options(argv):
+    parser = argparse.ArgumentParser(
+        description='Ubuntu OpenStack Installer CI Web',
+        prog='openstack-ci-web',
+        argument_default=argparse.SUPPRESS)
+    parser.add_argument('-c', '--config', type=str, dest='config_file',
+                        help="webserver config")
+    parser.add_argument('-p', '--port',  dest='http_port',
+                        help="Port to listen on.")
+    parser.add_argument('-d', '--debug', action='store_true',
+                        dest='debug',
+                        help="Debug mode")
+    return parser.parse_args(argv)
+
+
+if __name__ == "__main__":
+    setup_logger()
+    log = logging.getLogger('openstackci.web')
+
+    opts = parse_options(sys.argv[1:])
+    if not opts.config_file:
+        log.error("A configuration file is required to run webserver.")
+        sys.exit(1)
+
+    cfg = Config(utils.populate_config(opts))
+
+    log.info("Initializing web app with: {}".format(cfg._config))
+    sys.exit(App(cfg).run())

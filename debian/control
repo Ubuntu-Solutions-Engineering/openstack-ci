@@ -11,6 +11,7 @@ Build-Depends: debhelper (>= 9),
                python3-mock,
                python3-nose,
                python3-setuptools,
+               python3-tornado,
                python3-yaml
 Standards-Version: 3.9.5
 Homepage: https://github.com/Ubuntu-Solutions-Engineering/openstack-ci
@@ -27,6 +28,7 @@ Depends: openstack,
          python3-requests,
          python3-requests-oauthlib,
          python3-setuptools,
+         python3-tornado,
          python3-yaml,
          ${misc:Depends},
          ${python3:Depends}

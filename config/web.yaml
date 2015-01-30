@@ -1,0 +1,5 @@
+# Basic webserver configuration
+
+port: 8080
+cookie_secret: s3cr3ts4uc3!
+debug: true

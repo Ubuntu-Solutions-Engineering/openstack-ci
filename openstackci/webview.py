@@ -14,6 +14,14 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-""" Ubuntu OpenStack Installer CI """
+import logging
+from openstackci.webhandler import Base
 
-__version__ = "0.3"
+log = logging.getLogger('openstackci.web')
+
+
+class Index(Base):
+
+    def get(self):
+        log.info('Index hit.')
+        self.render_json({'Index': 'nothing to see here.'})

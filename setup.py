@@ -50,5 +50,6 @@ setup(name='openstackci',
       scripts=['openstack-ci', 'openstack-ci-web'],
       packages=find_packages(exclude=["test"]),
       data_files=[
-          ('share/man/man1', ['man/en/openstack-ci.1'])
+          ('share/man/man1', ['man/en/openstack-ci.1',
+                              'man/en/openstack-ci-web.1'])
       ])

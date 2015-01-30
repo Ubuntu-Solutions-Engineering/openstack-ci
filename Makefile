@@ -29,6 +29,7 @@ clean:
 
 man-pages:
 	@pandoc -s docs/openstack-ci.rst -t man -o man/en/openstack-ci.1
+	@pandoc -s docs/openstack-ci-web.rst -t man -o man/en/openstack-ci-web.1
 
 DPKGBUILDARGS = -us -uc -i'.git.*|.tox|.bzr.*|.editorconfig|.travis-yaml'
 deb-src: clean update_version tarball

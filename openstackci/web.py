@@ -54,8 +54,8 @@ class Application(tornado.web.Application):
         urls = [(r"/", webview.Index)]
         ui_modules_map = {}
         settings = dict(
-            template_path=None,
-            static_path=None,
+            template_path=self.config.getopt('template_path'),
+            static_path=self.config.getopt('static_path'),
             xsrf_cookies=False if self.config.getopt('debug') else True,
             cookie_secret=self.config.getopt('cookie_secret'),
             debug=self.config.getopt('debug'),

@@ -36,6 +36,9 @@ class TestUnit:
     identifier = None
     install_type = None
 
+    # Launchpad Bug (regression tracking)
+    bug = None
+
     def __init__(self, config):
         self.config = config
         self.report = Reporter(self.name,

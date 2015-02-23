@@ -19,7 +19,6 @@ import tornado.httpserver
 import tornado.ioloop
 import tornado.web
 import tornado.autoreload
-from tornado.process import fork_processes, task_id
 from openstackci import webview
 
 log = logging.getLogger('openstackci.web')
@@ -32,10 +31,6 @@ class App:
         self.port = self.config.getopt('port')
 
     def run(self):
-        if not self.config.getopt('debug'):
-            fork_processes(None)
-        self.port += task_id() or 0
-
         log.info("Starting openstackci web interface "
                  "@ http://localhost:{}".format(self.port))
         tornado.httpserver.HTTPServer(

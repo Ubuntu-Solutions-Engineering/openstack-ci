@@ -1,9 +1,0 @@
-headless: true
-install_only: false
-install_type: Single
-killcloud: false
-openstack_password: pass
-openstack_release: null
-release: null
-uninstall: false
-upstream_deb: null
